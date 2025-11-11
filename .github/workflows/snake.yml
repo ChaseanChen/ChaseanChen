@@ -20,6 +20,10 @@ jobs:
     # 指定运行此作业的虚拟机环境
     runs-on: ubuntu-latest
     
+    # 【已添加】授予工作流向仓库写入内容的权限
+    permissions:
+      contents: write
+    
     # 作业中包含的一系列步骤 (steps)
     steps:
       # 第一步：检出 (Checkout) 你的仓库代码
