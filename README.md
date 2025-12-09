@@ -17,7 +17,7 @@
 <h2 align="center"> GitHub Stats </h2>
 <div align="center">
   <img src="https://readme-flame.vercel.app/api?username=ChaseanChen&show_icons=true&theme=tokyonight&count_private=true" height="180" alt="stats" />
-  <img src="https://readme-flame.vercel.app/api/top-langs/?username=ChaseanChen&layout=compact&theme=tokyonight" height="180" alt="langs" />
+  <img src="https://readme-flame.vercel.app/api/top-langs/?username=ChaseanChen&theme=tokyonight" height="180" alt="langs" />
 </div>
 
 <br/>
