@@ -24,41 +24,19 @@ jobs:
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
             dist/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
-      # 2. 创建 3D 配置文件 (已修正高对比度配色)
-      - name: Create 3D Config File
-        run: |
-          echo '[
-              {
-                "fileName": "profile-custom-pink.svg",
-                "backgroundColor": "#222222",
-                "foregroundColor": "#ffffff",
-                "strongColor": "#ff0080",
-                "weakColor": "#5e1c38",
-                "radarColor": "#ff69b4",
-                "growingAnimation": true
-              }
-          ]' > my-config.json
-
       # 3. 生成 3D 图
       - name: Generate 3D Profile
         uses: yoshi389111/github-profile-3d-contrib@0.7.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
-          SETTING_JSON: ./my-config.json 
             
       # 4. 移动 3D 图文件到 dist 目录 & 修复权限
       - name: Move 3D files to dist
         run: |
-          # 1. 先创建 dist 目录(如果蛇没生成可能导致目录不存在，防报错)
           mkdir -p dist
-          
-          # 2. 抢回 dist 文件夹的所有权 (将 root 权限改为当前用户权限)
           sudo chown -R $USER:$USER dist
-          
-          # 3. 将生成的 3D 图复制进去
-          # 注意：这将复制所有生成的文件，包括我们自定义的 pink 和官方默认的 rainbow
-          cp -r profile-3d-contrib/* dist/
+          cp profile-3d-contrib/profile-night-rainbow.svg dist/
 
       # 5. 统一推送 dist 文件夹
       - name: Push all assets to output branch

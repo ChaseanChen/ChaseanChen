@@ -40,7 +40,7 @@
 
 <div align="center">
   <img 
-    src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-custom-pink.svg" 
+    src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-night-rainbow.svg" 
     width="100%" 
     alt="3d stats"
   />
