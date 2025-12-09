@@ -39,7 +39,10 @@
 </div>
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-green-animate.svg" alt="3D Green Contribution Graph" />
+  <img 
+    src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-green-animate.svg" 
+    width="100%" 
+  />
 </div>
 
 <h2 align="center"> connect with me </h2>

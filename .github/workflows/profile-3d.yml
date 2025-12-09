@@ -25,6 +25,21 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
 
+          # 自定义颜色配置
+          # 这是一个 JSON 字符串，你可以修改下面的颜色代码
+          SETTING_JSON: |
+            [
+              {
+                "fileName": "profile-custom-pink.svg",  
+                "backgroundColor": "#ffffff",           
+                "foregroundColor": "#ffc0cb",           
+                "strongColor": "#ff69b4",               
+                "weakColor": "#ffe4e1",                 
+                "radarColor": "#ff1493",                
+                "growingAnimation": true                
+              }
+            ]
+
       # 第三步：推送到 output 分支 (参照你的 snake 配置)
       # 这样生成的图片会存放于 output 分支，不会污染你的 main 分支提交记录
       - name: Push generated files to the output branch
