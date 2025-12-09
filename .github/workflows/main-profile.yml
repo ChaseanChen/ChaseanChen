@@ -31,16 +31,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
             
-# 4. 移动 3D 图文件到 dist 目录 & 修复权限 & 修改为 Dracula 背景
+      # 4. 移动 3D 图文件到 dist 目录 & 修改颜色 (淡蓝背景 + 深色文字)
       - name: Move 3D files to dist and Apply Theme
         run: |
           mkdir -p dist
           sudo chown -R $USER:$USER dist
           cp profile-3d-contrib/profile-night-rainbow.svg dist/
-          DRACULA_BG="#282a36"
-          DRACULA_FG="#f8f8f2"
-          sed -i "0,/fill=[\"']#[0-9a-fA-F]\{3,6\}[\"']/s//fill=\"$DRACULA_BG\"/" dist/profile-night-rainbow.svg
-          sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
+          TARGET_BG="#F0F6FC"
+          TARGET_FG="#24292f"
+          sed -i "0,/fill=[\"']#[0-9a-fA-F]\{3,6\}[\"']/s//fill=\"$TARGET_BG\"/" dist/profile-night-rainbow.svg
+          sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$TARGET_FG\"/g" dist/profile-night-rainbow.svg
 
       # 5. 统一推送 dist 文件夹
       - name: Push all assets to output branch
