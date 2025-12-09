@@ -25,17 +25,17 @@ jobs:
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
             dist/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
-      # 2. 创建 3D 配置文件
+# 2. 创建 3D 配置文件 (使用高对比度霓虹配色)
       - name: Create 3D Config File
         run: |
           echo '[
               {
                 "fileName": "profile-custom-pink.svg",
-                "backgroundColor": "#0d1117",
+                "backgroundColor": "#181818",
                 "foregroundColor": "#ffc0cb",
-                "strongColor": "#ff69b4",
-                "weakColor": "#ffe4e1",
-                "radarColor": "#ff1493",
+                "strongColor": "#ff0080",
+                "weakColor": "#2a0a18",
+                "radarColor": "#ff69b4",
                 "growingAnimation": true
               }
           ]' > my-config.json
