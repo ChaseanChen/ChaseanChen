@@ -31,7 +31,7 @@ jobs:
             [
               {
                 "fileName": "profile-custom-pink.svg",  
-                "backgroundColor": "#ffffff",           
+                "backgroundColor": "null",           
                 "foregroundColor": "#ffc0cb",           
                 "strongColor": "#ff69b4",               
                 "weakColor": "#ffe4e1",                 
