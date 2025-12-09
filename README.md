@@ -40,7 +40,7 @@
 
 <div align="center">
   <img 
-    src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-green-animate.svg" 
+    src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-gitblock.svg" 
     width="100%" 
   />
 </div>
