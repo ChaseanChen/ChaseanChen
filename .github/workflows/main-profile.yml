@@ -1,0 +1,62 @@
+name: Generate Profile Assets
+
+on:
+  schedule:
+    - cron: "0 */12 * * *" # 每12小时运行一次
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. 生成贪吃蛇
+      - name: Generate Snake
+        uses: Platane/snk@v3
+        with:
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            dist/github-contribution-grid-snake.svg
+            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
+            dist/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
+
+      # 2. 生成 3D 图
+      # 注意：我们将文件也输出到 dist 文件夹，方便统一推送
+      - name: Generate 3D Profile
+        uses: yoshi389111/github-profile-3d-contrib@0.7.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USERNAME: ${{ github.repository_owner }}
+          SETTING_JSON: |
+            [
+              {
+                "fileName": "profile-custom-pink.svg",  
+                "backgroundColor": "#0d1117",           
+                "foregroundColor": "#ffc0cb",           
+                "strongColor": "#ff69b4",               
+                "weakColor": "#ffe4e1",                 
+                "radarColor": "#ff1493",                
+                "growingAnimation": true                
+              }
+            ]
+            
+      # 3. 移动 3D 图文件到 dist 目录
+      # 3D Action 默认生成在 profile-3d-contrib 目录，我们需要把它挪到 dist 以便一起推送
+      - name: Move 3D files to dist
+        run: |
+          mkdir -p dist
+          cp -r profile-3d-contrib/* dist/
+
+      # 4. 统一推送 dist 文件夹
+      - name: Push all assets to output branch
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: output
+          build_dir: dist
+          keep_history: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

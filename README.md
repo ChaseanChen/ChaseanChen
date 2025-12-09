@@ -40,8 +40,9 @@
 
 <div align="center">
   <img 
-    src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-gitblock.svg" 
+    src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-custom-pink.svg" 
     width="100%" 
+    alt="3d stats"
   />
 </div>
 
