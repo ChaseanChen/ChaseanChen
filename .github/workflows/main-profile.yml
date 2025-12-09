@@ -31,27 +31,21 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
             
-# 4. 移动 3D 图文件到 dist 目录 & 强制修改颜色
+# 4. 移动 3D 图文件到 dist 目录 & 修复权限 & 修改为 Dracula 背景
       - name: Move 3D files to dist and Apply Theme
         run: |
           mkdir -p dist
           sudo chown -R $USER:$USER dist
+          
           cp profile-3d-contrib/profile-night-rainbow.svg dist/
           
-          TARGET_BG="#0d1117"
-          TARGET_TEXT="#e6edf3"
+          DRACULA_BG="#282a36"
+          DRACULA_FG="#f8f8f2"
           
-          echo "正在强制修改颜色..."
-
-          sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$TARGET_BG\"/" dist/profile-night-rainbow.svg
-
-          sed -i "s/fill=\"#24292f\"/fill=\"$TARGET_TEXT\"/g" dist/profile-night-rainbow.svg
-          sed -i "s/fill=\"#e4e2e2\"/fill=\"$TARGET_TEXT\"/g" dist/profile-night-rainbow.svg
-          sed -i "s/fill='#e4e2e2'/fill='$TARGET_TEXT'/g" dist/profile-night-rainbow.svg
+          sed -i "0,/fill=[\"']#[0-9a-fA-F]\{3,6\}[\"']/s//fill=\"$DRACULA_BG\"/" dist/profile-night-rainbow.svg
           
-          echo "=== 验证：检查文件头部背景色 ==="
-          grep -o 'fill="[^"]*"' dist/profile-night-rainbow.svg | head -n 1
-
+          sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
+          
       # 5. 统一推送 dist 文件夹
       - name: Push all assets to output branch
         uses: crazy-max/ghaction-github-pages@v4

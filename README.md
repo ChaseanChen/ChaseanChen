@@ -39,11 +39,11 @@
 </div>
 
 <div align="center">
-<img 
-  src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-night-rainbow.svg?v=2" 
-  width="100%" 
-  alt="3d stats"
-/>
+  <img 
+    src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-night-rainbow.svg" 
+    width="100%" 
+    alt="3d stats"
+  />
 </div>
 
 <h2 align="center"> connect with me </h2>
