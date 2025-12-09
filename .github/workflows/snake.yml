@@ -1,4 +1,4 @@
-# 文件名: .github/workflows/snake.yml
+# .github/workflows/snake.yml
 
 # 工作流的名称
 name: Generate GitHub Snake Animation
