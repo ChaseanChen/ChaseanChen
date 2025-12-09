@@ -15,6 +15,7 @@ jobs:
       - uses: actions/checkout@v4
 
       # 1. 生成贪吃蛇
+      # 注意：这一步完成后，dist 文件夹会被创建，但权限属于 root
       - name: Generate Snake
         uses: Platane/snk@v3
         with:
@@ -24,8 +25,7 @@ jobs:
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
             dist/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
-      # 2. 【修复步骤】先创建一个配置文件
-      # 我们使用 echo 命令将 JSON 内容写入名为 my-config.json 的文件中
+      # 2. 创建 3D 配置文件
       - name: Create 3D Config File
         run: |
           echo '[
@@ -41,7 +41,6 @@ jobs:
           ]' > my-config.json
 
       # 3. 生成 3D 图
-      # 这里我们将 SETTING_JSON 指向刚才创建的文件路径
       - name: Generate 3D Profile
         uses: yoshi389111/github-profile-3d-contrib@0.7.1
         env:
@@ -49,11 +48,14 @@ jobs:
           USERNAME: ${{ github.repository_owner }}
           SETTING_JSON: ./my-config.json 
             
-      # 4. 移动 3D 图文件到 dist 目录
+      # 4. 【修复重点】移动 3D 图文件到 dist 目录
+      # 我们添加了 sudo chown 命令来修复权限问题
       - name: Move 3D files to dist
         run: |
-          mkdir -p dist
-          # 3D Action 默认生成在 profile-3d-contrib 文件夹里
+          # 抢回 dist 文件夹的所有权 (将 root 权限改为当前用户权限)
+          sudo chown -R $USER:$USER dist
+          
+          # 现在可以安全地把 3D 图复制进去了
           cp -r profile-3d-contrib/* dist/
 
       # 5. 统一推送 dist 文件夹
