@@ -31,7 +31,7 @@ jobs:
           echo '[
               {
                 "fileName": "profile-custom-pink.svg",
-                "backgroundColor": "#181818",
+                "backgroundColor": "#efe4e4ff",
                 "foregroundColor": "#ffc0cb",
                 "strongColor": "#ff0080",
                 "weakColor": "#2a0a18",
