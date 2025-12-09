@@ -51,6 +51,10 @@
   </a>
 </p>
 
+<div align="center">
+  <img src="./profile-3d-contrib/profile-green-animate.svg" alt="3D Green Contribution Graph" />
+</div>
+
 ---
 <div align="center">
   
