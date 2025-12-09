@@ -24,34 +24,39 @@ jobs:
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
             dist/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
-      # 2. 生成 3D 图
-      # 注意：我们将文件也输出到 dist 文件夹，方便统一推送
+      # 2. 【修复步骤】先创建一个配置文件
+      # 我们使用 echo 命令将 JSON 内容写入名为 my-config.json 的文件中
+      - name: Create 3D Config File
+        run: |
+          echo '[
+              {
+                "fileName": "profile-custom-pink.svg",
+                "backgroundColor": "#0d1117",
+                "foregroundColor": "#ffc0cb",
+                "strongColor": "#ff69b4",
+                "weakColor": "#ffe4e1",
+                "radarColor": "#ff1493",
+                "growingAnimation": true
+              }
+          ]' > my-config.json
+
+      # 3. 生成 3D 图
+      # 这里我们将 SETTING_JSON 指向刚才创建的文件路径
       - name: Generate 3D Profile
         uses: yoshi389111/github-profile-3d-contrib@0.7.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
-          SETTING_JSON: |
-            [
-              {
-                "fileName": "profile-custom-pink.svg",  
-                "backgroundColor": "#0d1117",           
-                "foregroundColor": "#ffc0cb",           
-                "strongColor": "#ff69b4",               
-                "weakColor": "#ffe4e1",                 
-                "radarColor": "#ff1493",                
-                "growingAnimation": true                
-              }
-            ]
+          SETTING_JSON: ./my-config.json 
             
-      # 3. 移动 3D 图文件到 dist 目录
-      # 3D Action 默认生成在 profile-3d-contrib 目录，我们需要把它挪到 dist 以便一起推送
+      # 4. 移动 3D 图文件到 dist 目录
       - name: Move 3D files to dist
         run: |
           mkdir -p dist
+          # 3D Action 默认生成在 profile-3d-contrib 文件夹里
           cp -r profile-3d-contrib/* dist/
 
-      # 4. 统一推送 dist 文件夹
+      # 5. 统一推送 dist 文件夹
       - name: Push all assets to output branch
         uses: crazy-max/ghaction-github-pages@v4
         with:
