@@ -22,13 +22,13 @@
 
 <br/>
 
-<div align="center">
+<!-- <div align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://cdn.jsdelivr.net/gh/ChaseanChen/ChaseanChen@output/github-contribution-grid-snake-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="https://cdn.jsdelivr.net/gh/ChaseanChen/ChaseanChen@output/github-contribution-grid-snake.svg">
     <img alt="github contribution grid snake animation" src="https://cdn.jsdelivr.net/gh/ChaseanChen/ChaseanChen@output/github-contribution-grid-snake.svg">
   </picture>
-</div>
+</div> -->
 
 <div align="center">
   <picture>
