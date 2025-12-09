@@ -38,6 +38,10 @@
   </picture>
 </div>
 
+<div align="center">
+  <img src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-green-animate.svg" alt="3D Green Contribution Graph" />
+</div>
+
 <h2 align="center"> connect with me </h2>
 <p align="center">
   <a href="https://github.com/ChaseanChen" target="_blank">
@@ -50,10 +54,6 @@
     <img src="https://img.shields.io/badge/Outlook-0078D4?style=for-the-badge&logo=microsoft&logoColor=white" alt="Outlook"/>
   </a>
 </p>
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-green-animate.svg" alt="3D Green Contribution Graph" />
-</div>
 
 ---
 <div align="center">
