@@ -63,52 +63,54 @@ jobs:
 
           # --- 艺术画素材定义 ---
           art_duck = r"""
-              __
-            >(' )
-              )/   ,
-             /(____/\
-            /        )
-            \ `  =~~/
-             `---Y-'
-                ~~'
+              __          __
+            >(' )       >(' )  Quack~~
+              )/   ,      )/   ,
+             /(____/\    /(____/\
+            /        )  /        )
+            \ `  =~~/   \ `  =~~/
+             `---Y-'     `---Y-'
+                ~~'         ~~'
+            Tell us about your bugs.
           """
           art_cat = r"""
-               /\_/\
-              ( o.o )
-               > ^ <
+               /\_/\    /\_/\      Ctrl + C
+              ( o.o )  ( o.o )     Ctrl + V
+               > ^ <    > ^ <      Oh ~~
+               Whine~~~~Whine      $ cat file1 file2
           """
           art_anchor = r"""
-                   _
-                  (_)
-                <--|-->
-               _   |   _
-              `\__/ \__/`
-                `-. .-'
-                   '
+                 _                         _                    
+                (_)        __ _ _ __   ___| |__   ___  _ __ ___ 
+              <--|-->     / _` | '_ \ / __| '_ \ / _ \| '__/ __|
+             _   |   _   | (_| | | | | (__| | | | (_) | |  \__ \
+            `\__/ \__/`   \__,_|_| |_|\___|_| |_|\___/|_|  |___/
+              `-. .-'                 A W E I G H !
+                 '
           """
           art_dog = r"""
-                                            .-.
-               (___________________________()6 `-,
-               (   ______________________   /''"`
-               //\\                      //\\
-               "" ""                     "" ""
+                                                  .-.
+                     (___________________________()6 `-,
+                     (   ______________________   /''"`
+                     //\\                      //\\
+                     "" ""                     "" ""
+          * You pet the Dog. It has gone where no Dog has gone before.
           """
           art_swords = r"""
-                      />
-                     /<
-            O[\\\\\\(O):::<=======================-
+                      />            It's dangerous to go alone! *
+                     /<                              Take this. *
+            O[\\\\\\(O):::<=========================-
                      \<
                       \>
           """
-
-          art_deer = r"""
-                  _,--._.-,
-                 /\_r-,\_ )
+          art_rose = r"""
+                 _,--._.-,
+                /\_r-,\_ )
               .-.) _;='_/ (.;
                \ \'     \/S )
                 L.'-. _.'|-'
-               <_`-'\'_.'/
-                 `'-._( \
+               <_`-'\'_.'/  "It is the time you have wasted for 
+                 `'-._( \    your rose that makes your rose so important."
                   ___   \\,      ___
                   \ .'-. \\   .-'_. /
                    '._' '.\\/.-'_.'
@@ -118,7 +120,8 @@ jobs:
                               \|
           """
 
-          arts = [art_duck, art_cat, art_anchor, art_dog, art_swords, art_deer]
+
+          arts = [art_duck, art_cat, art_anchor, art_dog, art_swords, art_rose]
           selected_art = random.choice(arts)
           
           # 1. 基础处理
