@@ -43,7 +43,7 @@ jobs:
           DRACULA_BG="#282a36"
           DRACULA_FG="#f8f8f2"
 
-          BORDER_COLOR="#36BCF7" 
+          BORDER_COLOR="#f8f8f2" 
           BORDER_WIDTH="5"
           
           sed -i '0,/fill="[^"]*"/s//fill="'$DRACULA_BG'" stroke="'$BORDER_COLOR'" stroke-width="10" paint-order="stroke"/' dist/profile-night-rainbow.svg
