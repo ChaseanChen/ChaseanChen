@@ -46,9 +46,9 @@ jobs:
           BORDER_COLOR="#36BCF7" 
           BORDER_WIDTH="5"
           
-          sed -i "0,/fill=[\"']#[0-9a-fA-F]\{3,6\}[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$BORDER_COLOR\" stroke-width=\"$BORDER_WIDTH\"/" dist/profile-night-rainbow.svg
+          sed -i '0,/fill="[^"]*"/s//fill="'$DRACULA_BG'" stroke="'$BORDER_COLOR'" stroke-width="10" paint-order="stroke"/' dist/profile-night-rainbow.svg
           
-          sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
+          sed -i "s/fill=\"#e4e2e2\"/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
           
       # Unified push to the dist folder
       - name: Push all assets to output branch

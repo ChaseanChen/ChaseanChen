@@ -31,10 +31,9 @@
 </div>
 
 <div align="center">
-  <img 
-    src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-night-rainbow.svg" 
-    width="100%" 
-    alt="3d stats"
+  <img src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-night-rainbow.svg?v=1" 
+  width="100%" 
+  alt="3d stats"
   />
 </div>
 
