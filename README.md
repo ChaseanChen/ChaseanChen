@@ -3,6 +3,10 @@
 </div>
 
 <div align="center">
+  <img src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/ascii_art.svg" alt="Random ASCII Art" width="100%" />
+</div>
+
+<div align="center">
   <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=20&pause=1000&color=36BCF7&background=00000000&width=600&lines=Strive+to+make+your+spirit+bright%2C;Be+the+star+in+your+own+night." alt="My Developer Journey" />
 </div>
 

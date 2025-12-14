@@ -1,9 +1,8 @@
-# .github/workflows/main-profile.yml
 name: Generate Profile Assets
 
 on:
   schedule:
-    - cron: "0 */12 * * *" # Runs once every 12 hours
+    - cron: "0 */12 * * *" # 每12小时运行一次，意味着每12小时图片可能换一次
   workflow_dispatch:
 
 jobs:
@@ -15,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # generate a snake
+      # 1. Generate Snake (保留你的贪吃蛇)
       - name: Generate Snake
         uses: Platane/snk@v3
         with:
@@ -25,32 +24,144 @@ jobs:
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
             dist/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
-      # generate 3D image
+      # 2. Generate 3D Profile (保留你的3D图)
       - name: Generate 3D Profile
         uses: yoshi389111/github-profile-3d-contrib@0.7.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
             
-# Move 3D image files to the dist directory & fix permissions & change background to Dracula
+      # 3. Move 3D files & Apply Theme (保留你的主题设置)
       - name: Move 3D files to dist and Apply Theme
         run: |
           mkdir -p dist
-          sudo chown -R $USER:$USER dist
-          
           cp profile-3d-contrib/profile-night-rainbow.svg dist/
-
+          
+          # Dracula Theme Colors
           DRACULA_BG="#282a36"
           DRACULA_FG="#f8f8f2"
           BORDER_COLOR="#f8f8f2"
           BORDER_WIDTH="5"
           
           sed -i 's/stroke="none"//g' dist/profile-night-rainbow.svg
-          
           sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$BORDER_COLOR\" stroke-width=\"$BORDER_WIDTH\" rx=\"10\" ry=\"10\"/" dist/profile-night-rainbow.svg
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
+
+      # =========================================================
+      # 4. [核心部分] 生成随机 ASCII 艺术画
+      # =========================================================
+      - name: Generate Random ASCII Art
+        shell: python
+        run: |
+          import random
+          import os
+
+          # ---------------- 定义你的艺术画素材库 ----------------
+          # 注意：使用 r""" ... """ 来包裹，防止反斜杠被转义
           
-      # Unified push to the dist folder
+          # 1. 鸭子 (你提供的)
+          art_duck = r"""
+              __
+            >(' )
+              )/   ,
+             /(____/\
+            /        )
+            \ `  =~~/
+             `---Y-'
+                ~~'
+          """
+
+          # 2. 也是鸭子 (单个大版)
+          art_cat = r"""
+               /\_/\
+              ( o.o )
+               > ^ <
+            """
+
+            art_anchor = r"""
+                   _
+                  (_)
+                <--|-->
+               _   |   _
+              `\__/ \__/`
+                `-. .-'
+                   '
+            """
+
+          # 3. 喝咖啡的猫
+          art_dog = r"""
+                                            .-.
+               (___________________________()6 `-,
+               (   ______________________   /''"`
+               //\\                      //\\
+          jgs  "" ""                     "" ""
+          """
+
+          art_swords = r"""
+                      />
+                     /<
+            O[\\\\\\(O):::<=======================-
+                     \<
+                      \>
+          """
+
+          art_arrow = r"""
+            >>>>>------------------------->
+          """
+
+          art_deer = r"""
+                  _,--._.-,
+                 /\_r-,\_ )
+              .-.) _;='_/ (.;
+               \ \'     \/S )
+                L.'-. _.'|-'
+               <_`-'\'_.'/
+                 `'-._( \
+                  ___   \\,      ___
+                  \ .'-. \\   .-'_. /
+                   '._' '.\\/.-'_.'
+                      '--``\('--'
+                      snd   \\
+                            `\\,
+                              \|
+          """
+
+          # 将它们放入列表
+          arts = [art_duck, art_big_duck, art_cat, art_ghost]
+          
+          # 随机选择一个
+          selected_art = random.choice(arts)
+
+          # ---------------- 生成 SVG ----------------
+          # 这里的 CSS 颜色 #f8f8f2 对应 Dracula 主题的前景色
+          svg_content = f"""<svg fill="none" viewBox="0 0 600 250" width="100%" height="250" xmlns="http://www.w3.org/2000/svg">
+            <foreignObject width="100%" height="100%">
+              <div xmlns="http://www.w3.org/1999/xhtml">
+                <style>
+                  pre {{
+                    font-family: 'Courier New', Courier, monospace;
+                    font-size: 16px;
+                    font-weight: bold;
+                    color: #f8f8f2; 
+                    text-align: center;
+                    width: 100%;
+                    white-space: pre;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 200px;
+                  }}
+                </style>
+                <pre>{selected_art}</pre>
+              </div>
+            </foreignObject>
+          </svg>"""
+
+          # 写入文件
+          with open("dist/ascii_art.svg", "w") as f:
+              f.write(svg_content)
+
+      # 5. Push all assets (包括新生成的 ascii_art.svg)
       - name: Push all assets to output branch
         uses: crazy-max/ghaction-github-pages@v4
         with:
