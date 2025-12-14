@@ -63,21 +63,21 @@ jobs:
 
           # --- 艺术画素材定义 ---
           art_duck = r"""
-              __          __
-            >(' )       >(' )  Quack~~
-              )/   ,      )/   ,
-             /(____/\    /(____/\
-            /        )  /        )
-            \ `  =~~/   \ `  =~~/
-             `---Y-'     `---Y-'
-                ~~'         ~~'
-            Tell us about your bugs.
+              __          __          __
+            >(' )       >(' )       >(' )  Quack~~
+              )/   ,      )/   ,      )/   ,
+             /(____/\    /(____/\    /(____/\
+            /        )  /        )  /        )
+            \ `  =~~/   \ `  =~~/   \ `  =~~/
+             `---Y-'     `---Y-'     `---Y-'
+                ~~'         ~~'         ~~'
+                * Tell us about your bugs.
           """
           art_cat = r"""
-               /\_/\    /\_/\      Ctrl + C
-              ( o.o )  ( o.o )     Ctrl + V
-               > ^ <    > ^ <      Oh ~~
-               Whine~~~~Whine      $ cat file1 file2
+               /\_/\    /\_/\      * Ctrl + C
+              ( o.o )  ( o.o )     * Ctrl + V
+               > ^ <    > ^ <      * Oh ~~
+               Whine~~~~Whine      * $ cat file1 file2
           """
           art_anchor = r"""
                  _                         _                    
