@@ -39,16 +39,15 @@ jobs:
           sudo chown -R $USER:$USER dist
           
           cp profile-3d-contrib/profile-night-rainbow.svg dist/
-          
+
           DRACULA_BG="#282a36"
           DRACULA_FG="#f8f8f2"
-
-          BORDER_COLOR="#f8f8f2" 
-          BORDER_WIDTH="5"
+          BORDER_COLOR="#f8f8f2"
+          BORDER_WIDTH="4"
           
-          sed -i '0,/fill="[^"]*"/s//fill="'$DRACULA_BG'" stroke="'$BORDER_COLOR'" stroke-width="10" paint-order="stroke"/' dist/profile-night-rainbow.svg
+          sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$BORDER_COLOR\" stroke-width=\"$BORDER_WIDTH\" rx=\"6\" ry=\"6\"/" dist/profile-night-rainbow.svg
           
-          sed -i "s/fill=\"#e4e2e2\"/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
+          sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
           
       # Unified push to the dist folder
       - name: Push all assets to output branch
