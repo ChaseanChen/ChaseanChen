@@ -53,7 +53,7 @@ jobs:
           sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$BORDER_COLOR\" stroke-width=\"$BORDER_WIDTH\" rx=\"10\" ry=\"10\"/" dist/profile-night-rainbow.svg
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
 
-# 4. [修复版] 生成随机 ASCII 艺术画 (内联样式 + 原生 SVG)
+# 4. [完美版] 自动居中 + 自动高度 + 原生SVG兼容
       - name: Generate Random ASCII Art
         shell: python
         run: |
@@ -61,7 +61,7 @@ jobs:
           import os
           import html
 
-          # ... (此处保留你原有的 art_duck, art_cat 等变量定义，不用变) ...
+          # --- 艺术画素材定义 ---
           art_duck = r"""
               __
             >(' )
@@ -123,25 +123,51 @@ jobs:
           arts = [art_duck, art_cat, art_anchor, art_dog, art_swords, art_arrow, art_deer]
           selected_art = random.choice(arts)
           
-          # 1. 预处理
-          selected_art = selected_art.strip("\n")
+          # 1. 基础处理
+          selected_art = selected_art.strip("\n") # 去除首尾空行
           lines = selected_art.split("\n")
           
-          # 2. 构建 tspan (所有样式内联，不再依赖 CSS 类)
-          # x="50" 是左边距，dy="1.2em" 是行高
+          # 2. [关键] 计算动态高度 (解决截断问题)
+          # 字体大小 15px * 行高 1.2 ≈ 18px
+          line_height_px = 18 
+          padding_y = 60 # 上下总边距
+          
+          content_height = len(lines) * line_height_px
+          final_height = max(200, content_height + padding_y) # 最小高度200
+
+          # 3. [关键] 计算动态左边距 (解决居中问题)
+          # 找出最长的一行有多少个字符
+          max_char_count = 0
+          for line in lines:
+              if len(line) > max_char_count:
+                  max_char_count = len(line)
+          
+          # 估算宽度：Courier New 字体大约是字号的 0.6 倍宽
+          # 15px * 0.6 = 9px
+          char_width_px = 9.2 
+          art_width_px = max_char_count * char_width_px
+          
+          svg_width = 600
+          # 居中公式：(容器宽 - 内容宽) / 2
+          start_x = (svg_width - art_width_px) / 2
+          
+          # 防止计算结果太靠左（比如长剑太长），设置一个最小左边距
+          if start_x < 20:
+              start_x = 20
+
+          # 4. 构建 SVG 内容
           tspans = ""
           for line in lines:
               safe_line = html.escape(line)
-              tspans += f'<tspan x="50" dy="1.2em">{safe_line}</tspan>'
+              # 使用计算出来的 start_x
+              tspans += f'<tspan x="{start_x}" dy="1.2em">{safe_line}</tspan>'
 
-          # 3. 生成 SVG (头部添加 xmlns, 移除 style 标签)
-          # font-family 增加了 fallback，fill 直接写死颜色
-          svg_content = f"""<svg fill="none" viewBox="0 0 600 250" width="100%" height="250" xmlns="http://www.w3.org/2000/svg">
-            <!-- 背景色矩形 (可选，为了确保文字能看清) -->
+          # 5. 写入文件
+          # 这里的 padding_top 取 30，配合 text y=30 作为起始基线
+          svg_content = f"""<svg fill="none" viewBox="0 0 600 {final_height}" width="100%" height="{final_height}" xmlns="http://www.w3.org/2000/svg">
             <rect width="100%" height="100%" fill="#282a36" rx="10" />
             
-            <!-- 文本主体：所有样式写在属性里，xml:space="preserve" 保留空格 -->
-            <text x="50" y="30" 
+            <text x="{start_x}" y="30" 
                   font-family="Courier New, Courier, monospace" 
                   font-weight="bold" 
                   font-size="15" 
