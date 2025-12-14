@@ -2,7 +2,7 @@ name: Generate Profile Assets
 
 on:
   schedule:
-    - cron: "0 */12 * * *" # 每12小时运行一次
+    - cron: "0 */12 * * *"
   workflow_dispatch:
 
 jobs:
@@ -14,7 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. Generate Snake (会以 root 权限创建 dist 目录)
       - name: Generate Snake
         uses: Platane/snk@v3
         with:
@@ -24,22 +23,17 @@ jobs:
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
             dist/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
-      # 2. Generate 3D Profile
       - name: Generate 3D Profile
         uses: yoshi389111/github-profile-3d-contrib@0.7.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
             
-      # 3. [关键修复] 移动文件并应用主题
       - name: Move 3D files to dist and Apply Theme
         run: |
-          # --- 修复权限问题的关键代码 ---
-          # 因为上一步 Snake 是用 Docker (root) 生成的 dist，我们需要夺回权限
           sudo mkdir -p dist
           sudo chown -R $USER:$USER dist
           
-          # 现在可以正常复制了
           cp profile-3d-contrib/profile-night-rainbow.svg dist/
           
           # Dracula Theme Colors
@@ -48,12 +42,10 @@ jobs:
           BORDER_COLOR="#f8f8f2"
           BORDER_WIDTH="5"
           
-          # 修改 SVG 源码
           sed -i 's/stroke="none"//g' dist/profile-night-rainbow.svg
           sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$BORDER_COLOR\" stroke-width=\"$BORDER_WIDTH\" rx=\"10\" ry=\"10\"/" dist/profile-night-rainbow.svg
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
 
-# 4. [完美版] 自动居中 + 自动高度 + 原生SVG兼容
       - name: Generate Random ASCII Art
         shell: python
         run: |
@@ -61,51 +53,38 @@ jobs:
           import os
           import html
 
-          # --- 1. 读取外部文件 ---
-          # 设定存放 ASCII 文件的目录名称
           art_dir = "ascii_arts"
           
-          # 检查目录是否存在（防止报错）
           if not os.path.exists(art_dir):
               print(f"Error: Directory {art_dir} not found.")
               exit(1)
 
-          # 获取该目录下所有 .txt 文件
           files = [f for f in os.listdir(art_dir) if f.endswith('.txt')]
           
           if not files:
               print("No .txt files found in the directory.")
-              # 这里可以写一个默认的 fallback 艺术图，或者直接报错
               selected_art = "No Art Found :("
           else:
-              # 随机选择一个文件
               selected_file = random.choice(files)
-              print(f"Selected art file: {selected_file}") # 打印日志方便调试
+              print(f"Selected art file: {selected_file}")
               
-              # 读取文件内容
               with open(os.path.join(art_dir, selected_file), "r", encoding="utf-8") as f:
                   selected_art = f.read()
 
-          # --- 2. 基础处理 ---
-          selected_art = selected_art.strip("\n") # 去除文件首尾可能多余的空行
+          selected_art = selected_art.strip("\n")
           lines = selected_art.split("\n")
           
-          # --- 3. 计算动态高度 (保持原有逻辑) ---
-          # 字体大小 15px * 行高 1.2 ≈ 18px
           line_height_px = 18 
           padding_y = 60 
           
           content_height = len(lines) * line_height_px
           final_height = max(200, content_height + padding_y)
 
-          # --- 4. 计算动态左边距 (保持原有逻辑) ---
           max_char_count = 0
           for line in lines:
-              # 注意：中文字符可能需要特殊处理，但通常 ASCII Art 都是英文字符
               if len(line) > max_char_count:
                   max_char_count = len(line)
           
-          # 估算宽度：Courier New 字体大约是字号的 0.6 倍宽
           char_width_px = 9.2 
           art_width_px = max_char_count * char_width_px
           
@@ -115,13 +94,11 @@ jobs:
           if start_x < 20:
               start_x = 20
 
-          # --- 5. 构建 SVG 内容 ---
           tspans = ""
           for line in lines:
               safe_line = html.escape(line)
               tspans += f'<tspan x="{start_x}" dy="1.2em">{safe_line}</tspan>'
 
-          # --- 6. 写入文件 ---
           svg_content = f"""<svg fill="none" viewBox="0 0 600 {final_height}" width="100%" height="{final_height}" xmlns="http://www.w3.org/2000/svg">
             <rect width="100%" height="100%" fill="#282a36" rx="10" />
             
@@ -133,14 +110,12 @@ jobs:
                   xml:space="preserve">{tspans}</text>
           </svg>"""
 
-          # 确保 dist 目录存在 (虽然前面的步骤应该已经创建了)
           if not os.path.exists("dist"):
               os.makedirs("dist")
 
           with open("dist/ascii_art.svg", "w", encoding="utf-8") as f:
               f.write(svg_content)
 
-      # 5. Push 
       - name: Push all assets to output branch
         uses: crazy-max/ghaction-github-pages@v4
         with:
