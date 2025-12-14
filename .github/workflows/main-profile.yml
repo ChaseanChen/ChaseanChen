@@ -2,7 +2,7 @@ name: Generate Profile Assets
 
 on:
   schedule:
-    - cron: "0 */12 * * *" # 每12小时运行一次，意味着每12小时图片可能换一次
+    - cron: "0 */12 * * *" # 每12小时运行一次
   workflow_dispatch:
 
 jobs:
@@ -43,12 +43,13 @@ jobs:
           BORDER_COLOR="#f8f8f2"
           BORDER_WIDTH="5"
           
+          # 修改背景色、边框和字体颜色
           sed -i 's/stroke="none"//g' dist/profile-night-rainbow.svg
           sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$BORDER_COLOR\" stroke-width=\"$BORDER_WIDTH\" rx=\"10\" ry=\"10\"/" dist/profile-night-rainbow.svg
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
 
       # =========================================================
-      # 4. [核心部分] 生成随机 ASCII 艺术画
+      # 4. [已修复] 生成随机 ASCII 艺术画
       # =========================================================
       - name: Generate Random ASCII Art
         shell: python
@@ -57,9 +58,8 @@ jobs:
           import os
 
           # ---------------- 定义你的艺术画素材库 ----------------
-          # 注意：使用 r""" ... """ 来包裹，防止反斜杠被转义
           
-          # 1. 鸭子 (你提供的)
+          # 1. 鸭子
           art_duck = r"""
               __
             >(' )
@@ -71,14 +71,15 @@ jobs:
                 ~~'
           """
 
-          # 2. 也是鸭子 (单个大版)
+          # 2. 猫咪
           art_cat = r"""
                /\_/\
               ( o.o )
                > ^ <
-            """
+          """
 
-            art_anchor = r"""
+          # 3. 船锚
+          art_anchor = r"""
                    _
                   (_)
                 <--|-->
@@ -86,9 +87,9 @@ jobs:
               `\__/ \__/`
                 `-. .-'
                    '
-            """
+          """
 
-          # 3. 喝咖啡的猫
+          # 4. 狗狗
           art_dog = r"""
                                             .-.
                (___________________________()6 `-,
@@ -97,6 +98,7 @@ jobs:
           jgs  "" ""                     "" ""
           """
 
+          # 5. 宝剑
           art_swords = r"""
                       />
                      /<
@@ -105,10 +107,12 @@ jobs:
                       \>
           """
 
+          # 6. 箭矢
           art_arrow = r"""
             >>>>>------------------------->
           """
 
+          # 7. 鹿
           art_deer = r"""
                   _,--._.-,
                  /\_r-,\_ )
@@ -126,14 +130,14 @@ jobs:
                               \|
           """
 
-          # 将它们放入列表
-          arts = [art_duck, art_big_duck, art_cat, art_ghost]
+          # 将所有定义好的变量放入列表 (修复了之前的变量名错误)
+          arts = [art_duck, art_cat, art_anchor, art_dog, art_swords, art_arrow, art_deer]
           
           # 随机选择一个
           selected_art = random.choice(arts)
 
           # ---------------- 生成 SVG ----------------
-          # 这里的 CSS 颜色 #f8f8f2 对应 Dracula 主题的前景色
+          # 使用 Dracula 主题前景色 #f8f8f2
           svg_content = f"""<svg fill="none" viewBox="0 0 600 250" width="100%" height="250" xmlns="http://www.w3.org/2000/svg">
             <foreignObject width="100%" height="100%">
               <div xmlns="http://www.w3.org/1999/xhtml">
@@ -161,7 +165,7 @@ jobs:
           with open("dist/ascii_art.svg", "w") as f:
               f.write(svg_content)
 
-      # 5. Push all assets (包括新生成的 ascii_art.svg)
+      # 5. Push all assets
       - name: Push all assets to output branch
         uses: crazy-max/ghaction-github-pages@v4
         with:
