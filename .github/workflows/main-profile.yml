@@ -61,110 +61,67 @@ jobs:
           import os
           import html
 
-          # --- 艺术画素材定义 ---
-          art_duck = r"""
-              __          __          __
-            >(' )       >(' )       >(' )  Quack~~
-              )/   ,      )/   ,      )/   ,
-             /(____/\    /(____/\    /(____/\
-            /        )  /        )  /        )
-            \ `  =~~/   \ `  =~~/   \ `  =~~/
-             `---Y-'     `---Y-'     `---Y-'
-                ~~'         ~~'         ~~'
-                * Tell us about your bugs.
-          """
-          art_cat = r"""
-               /\_/\    /\_/\      * Ctrl + C
-              ( o.o )  ( o.o )     * Ctrl + V
-               > ^ <    > ^ <      * Oh ~~
-               Whine~~~~Whine      * $ cat file1 file2
-          """
-          art_anchor = r"""
-                 _                         _                    
-                (_)        __ _ _ __   ___| |__   ___  _ __ ___ 
-              <--|-->     / _` | '_ \ / __| '_ \ / _ \| '__/ __|
-             _   |   _   | (_| | | | | (__| | | | (_) | |  \__ \
-            `\__/ \__/`   \__,_|_| |_|\___|_| |_|\___/|_|  |___/
-              `-. .-'                 A W E I G H !
-                 '
-          """
-          art_dog = r"""
-                                                  .-.
-                     (___________________________()6 `-,
-                     (   ______________________   /''"`
-                     //\\                      //\\
-                     "" ""                     "" ""
-          * You pet the Dog. It has gone where no Dog has gone before.
-          """
-          art_swords = r"""
-                      />            It's dangerous to go alone! *
-                     /<                              Take this. *
-            O[\\\\\\(O):::<=========================-
-                     \<
-                      \>
-          """
-          art_rose = r"""
-                  _,--._.-,
-                 /\_r-,\_ )
-              .-.) _;='_/ (.;
-               \ \'     \/S )
-                L.'-. _.'|-'
-               <_`-'\'_.'/  "It is the time you have wasted for 
-                 `'-._( \    your rose that makes your rose so important."
-                  ___   \\,      ___
-                  \ .'-. \\   .-'_. /
-                   '._' '.\\/.-'_.'
-                      '--``\('--'
-                            \\
-                            `\\,
-                              \|
-          """
-
-
-          arts = [art_duck, art_cat, art_anchor, art_dog, art_swords, art_rose]
-          selected_art = random.choice(arts)
+          # --- 1. 读取外部文件 ---
+          # 设定存放 ASCII 文件的目录名称
+          art_dir = "ascii_arts"
           
-          # 1. 基础处理
-          selected_art = selected_art.strip("\n") # 去除首尾空行
+          # 检查目录是否存在（防止报错）
+          if not os.path.exists(art_dir):
+              print(f"Error: Directory {art_dir} not found.")
+              exit(1)
+
+          # 获取该目录下所有 .txt 文件
+          files = [f for f in os.listdir(art_dir) if f.endswith('.txt')]
+          
+          if not files:
+              print("No .txt files found in the directory.")
+              # 这里可以写一个默认的 fallback 艺术图，或者直接报错
+              selected_art = "No Art Found :("
+          else:
+              # 随机选择一个文件
+              selected_file = random.choice(files)
+              print(f"Selected art file: {selected_file}") # 打印日志方便调试
+              
+              # 读取文件内容
+              with open(os.path.join(art_dir, selected_file), "r", encoding="utf-8") as f:
+                  selected_art = f.read()
+
+          # --- 2. 基础处理 ---
+          selected_art = selected_art.strip("\n") # 去除文件首尾可能多余的空行
           lines = selected_art.split("\n")
           
-          # 2. [关键] 计算动态高度 (解决截断问题)
+          # --- 3. 计算动态高度 (保持原有逻辑) ---
           # 字体大小 15px * 行高 1.2 ≈ 18px
           line_height_px = 18 
-          padding_y = 60 # 上下总边距
+          padding_y = 60 
           
           content_height = len(lines) * line_height_px
-          final_height = max(200, content_height + padding_y) # 最小高度200
+          final_height = max(200, content_height + padding_y)
 
-          # 3. [关键] 计算动态左边距 (解决居中问题)
-          # 找出最长的一行有多少个字符
+          # --- 4. 计算动态左边距 (保持原有逻辑) ---
           max_char_count = 0
           for line in lines:
+              # 注意：中文字符可能需要特殊处理，但通常 ASCII Art 都是英文字符
               if len(line) > max_char_count:
                   max_char_count = len(line)
           
           # 估算宽度：Courier New 字体大约是字号的 0.6 倍宽
-          # 15px * 0.6 = 9px
           char_width_px = 9.2 
           art_width_px = max_char_count * char_width_px
           
           svg_width = 600
-          # 居中公式：(容器宽 - 内容宽) / 2
           start_x = (svg_width - art_width_px) / 2
           
-          # 防止计算结果太靠左（比如长剑太长），设置一个最小左边距
           if start_x < 20:
               start_x = 20
 
-          # 4. 构建 SVG 内容
+          # --- 5. 构建 SVG 内容 ---
           tspans = ""
           for line in lines:
               safe_line = html.escape(line)
-              # 使用计算出来的 start_x
               tspans += f'<tspan x="{start_x}" dy="1.2em">{safe_line}</tspan>'
 
-          # 5. 写入文件
-          # 这里的 padding_top 取 30，配合 text y=30 作为起始基线
+          # --- 6. 写入文件 ---
           svg_content = f"""<svg fill="none" viewBox="0 0 600 {final_height}" width="100%" height="{final_height}" xmlns="http://www.w3.org/2000/svg">
             <rect width="100%" height="100%" fill="#282a36" rx="10" />
             
@@ -176,7 +133,11 @@ jobs:
                   xml:space="preserve">{tspans}</text>
           </svg>"""
 
-          with open("dist/ascii_art.svg", "w") as f:
+          # 确保 dist 目录存在 (虽然前面的步骤应该已经创建了)
+          if not os.path.exists("dist"):
+              os.makedirs("dist")
+
+          with open("dist/ascii_art.svg", "w", encoding="utf-8") as f:
               f.write(svg_content)
 
       # 5. Push 
