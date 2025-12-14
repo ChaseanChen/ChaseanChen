@@ -53,12 +53,13 @@ jobs:
           sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$BORDER_COLOR\" stroke-width=\"$BORDER_WIDTH\" rx=\"10\" ry=\"10\"/" dist/profile-night-rainbow.svg
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
 
-      # 4. 生成随机 ASCII 艺术画
+      # 4. [修复] 生成随机 ASCII 艺术画 (使用原生 SVG 替代 foreignObject)
       - name: Generate Random ASCII Art
         shell: python
         run: |
           import random
           import os
+          import html
 
           # 定义艺术画素材
           art_duck = r"""
@@ -129,29 +130,37 @@ jobs:
           arts = [art_duck, art_cat, art_anchor, art_dog, art_swords, art_arrow, art_deer]
           
           selected_art = random.choice(arts)
+          
+          # 去除首尾空行
+          selected_art = selected_art.strip("\n")
+          
+          # 按行分割
+          lines = selected_art.split("\n")
+          
+          # 构建 SVG tspan 内容
+          # x="100" 设置左边距，保证图形在正中间偏左的位置，防止变形
+          # dy="1.2em" 负责换行
+          tspans = ""
+          for line in lines:
+              safe_line = html.escape(line)
+              tspans += f'<tspan x="100" dy="1.2em">{safe_line}</tspan>'
 
-          # 生成 SVG
+          # 生成纯 SVG (移除 foreignObject)
+          # xml:space="preserve" 是关键，它保留了 ASCII 必须的空格
           svg_content = f"""<svg fill="none" viewBox="0 0 600 250" width="100%" height="250" xmlns="http://www.w3.org/2000/svg">
-            <foreignObject width="100%" height="100%">
-              <div xmlns="http://www.w3.org/1999/xhtml">
-                <style>
-                  pre {{
-                    font-family: 'Courier New', Courier, monospace;
-                    font-size: 16px;
-                    font-weight: bold;
-                    color: #f8f8f2; 
-                    text-align: center;
-                    width: 100%;
-                    white-space: pre;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    height: 200px;
-                  }}
-                </style>
-                <pre>{selected_art}</pre>
-              </div>
-            </foreignObject>
+            <style>
+              .ascii-text {{
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 15px;
+                font-weight: bold;
+                fill: #f8f8f2;
+                white-space: pre;
+              }}
+            </style>
+            
+            <text x="100" y="30" class="ascii-text" xml:space="preserve">
+              {tspans}
+            </text>
           </svg>"""
 
           with open("dist/ascii_art.svg", "w") as f:
