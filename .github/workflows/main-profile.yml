@@ -100,9 +100,7 @@ jobs:
                      \<
                       \>
           """
-          art_arrow = r"""
-            >>>>>------------------------->
-          """
+
           art_deer = r"""
                   _,--._.-,
                  /\_r-,\_ )
@@ -120,7 +118,7 @@ jobs:
                               \|
           """
 
-          arts = [art_duck, art_cat, art_anchor, art_dog, art_swords, art_arrow, art_deer]
+          arts = [art_duck, art_cat, art_anchor, art_dog, art_swords, art_deer]
           selected_art = random.choice(arts)
           
           # 1. 基础处理
