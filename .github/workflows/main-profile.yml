@@ -53,7 +53,7 @@ jobs:
           sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$BORDER_COLOR\" stroke-width=\"$BORDER_WIDTH\" rx=\"10\" ry=\"10\"/" dist/profile-night-rainbow.svg
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
 
-      # 4. [修复] 生成随机 ASCII 艺术画 (使用原生 SVG 替代 foreignObject)
+# 4. [修复版] 生成随机 ASCII 艺术画 (内联样式 + 原生 SVG)
       - name: Generate Random ASCII Art
         shell: python
         run: |
@@ -61,7 +61,7 @@ jobs:
           import os
           import html
 
-          # 定义艺术画素材
+          # ... (此处保留你原有的 art_duck, art_cat 等变量定义，不用变) ...
           art_duck = r"""
               __
             >(' )
@@ -72,13 +72,11 @@ jobs:
              `---Y-'
                 ~~'
           """
-
           art_cat = r"""
                /\_/\
               ( o.o )
                > ^ <
           """
-
           art_anchor = r"""
                    _
                   (_)
@@ -88,7 +86,6 @@ jobs:
                 `-. .-'
                    '
           """
-
           art_dog = r"""
                                             .-.
                (___________________________()6 `-,
@@ -96,7 +93,6 @@ jobs:
                //\\                      //\\
           jgs  "" ""                     "" ""
           """
-
           art_swords = r"""
                       />
                      /<
@@ -104,11 +100,9 @@ jobs:
                      \<
                       \>
           """
-
           art_arrow = r"""
             >>>>>------------------------->
           """
-
           art_deer = r"""
                   _,--._.-,
                  /\_r-,\_ )
@@ -126,41 +120,33 @@ jobs:
                               \|
           """
 
-          # 放入列表
           arts = [art_duck, art_cat, art_anchor, art_dog, art_swords, art_arrow, art_deer]
-          
           selected_art = random.choice(arts)
           
-          # 去除首尾空行
+          # 1. 预处理
           selected_art = selected_art.strip("\n")
-          
-          # 按行分割
           lines = selected_art.split("\n")
           
-          # 构建 SVG tspan 内容
-          # x="100" 设置左边距，保证图形在正中间偏左的位置，防止变形
-          # dy="1.2em" 负责换行
+          # 2. 构建 tspan (所有样式内联，不再依赖 CSS 类)
+          # x="50" 是左边距，dy="1.2em" 是行高
           tspans = ""
           for line in lines:
               safe_line = html.escape(line)
-              tspans += f'<tspan x="100" dy="1.2em">{safe_line}</tspan>'
+              tspans += f'<tspan x="50" dy="1.2em">{safe_line}</tspan>'
 
-          # 生成纯 SVG (移除 foreignObject)
-          # xml:space="preserve" 是关键，它保留了 ASCII 必须的空格
+          # 3. 生成 SVG (头部添加 xmlns, 移除 style 标签)
+          # font-family 增加了 fallback，fill 直接写死颜色
           svg_content = f"""<svg fill="none" viewBox="0 0 600 250" width="100%" height="250" xmlns="http://www.w3.org/2000/svg">
-            <style>
-              .ascii-text {{
-                font-family: 'Courier New', Courier, monospace;
-                font-size: 15px;
-                font-weight: bold;
-                fill: #f8f8f2;
-                white-space: pre;
-              }}
-            </style>
+            <!-- 背景色矩形 (可选，为了确保文字能看清) -->
+            <rect width="100%" height="100%" fill="#282a36" rx="10" />
             
-            <text x="100" y="30" class="ascii-text" xml:space="preserve">
-              {tspans}
-            </text>
+            <!-- 文本主体：所有样式写在属性里，xml:space="preserve" 保留空格 -->
+            <text x="50" y="30" 
+                  font-family="Courier New, Courier, monospace" 
+                  font-weight="bold" 
+                  font-size="15" 
+                  fill="#f8f8f2" 
+                  xml:space="preserve">{tspans}</text>
           </svg>"""
 
           with open("dist/ascii_art.svg", "w") as f:

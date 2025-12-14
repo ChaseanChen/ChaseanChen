@@ -3,7 +3,7 @@
 </div>
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/ascii_art.svg" alt="Random ASCII Art" width="100%" />
+  <img src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/ascii_art.svg?v=fix1" alt="Random ASCII Art" width="100%" />
 </div>
 
 <div align="center">
