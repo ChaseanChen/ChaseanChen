@@ -1,8 +1,9 @@
+# .github/workflows/main-profile.yml
 name: Generate Profile Assets
 
 on:
   schedule:
-    - cron: "0 */12 * * *" # 每12小时运行一次
+    - cron: "0 */12 * * *" # Runs once every 12 hours
   workflow_dispatch:
 
 jobs:
@@ -14,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. 生成贪吃蛇
+      # generate a snake
       - name: Generate Snake
         uses: Platane/snk@v3
         with:
@@ -24,14 +25,14 @@ jobs:
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
             dist/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
-      # 3. 生成 3D 图
+      # generate 3D image
       - name: Generate 3D Profile
         uses: yoshi389111/github-profile-3d-contrib@0.7.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
             
-# 4. 移动 3D 图文件到 dist 目录 & 修复权限 & 修改为 Dracula 背景
+# Move 3D image files to the dist directory & fix permissions & change background to Dracula
       - name: Move 3D files to dist and Apply Theme
         run: |
           mkdir -p dist
@@ -46,7 +47,7 @@ jobs:
           
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
           
-      # 5. 统一推送 dist 文件夹
+      # Unified push to the dist folder
       - name: Push all assets to output branch
         uses: crazy-max/ghaction-github-pages@v4
         with:
