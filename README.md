@@ -41,6 +41,11 @@
 </div>
 
 <h2 align="center"> connect with me </h2>
+
+<p align="center">
+  <img src="https://media.giphy.com/media/xuXzcHMkuwvf2/giphy.gif" width="200" />
+</p>
+
 <p align="center">
   <a href="https://github.com/ChaseanChen" target="_blank">
     <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" alt="GitHub"/>
@@ -48,10 +53,6 @@
   <a href="mailto:eldric520lol@gmail.com" target="_blank">
     <img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Gmail"/>
   </a>
-  <a href="mailto:eldric520@outlook.com" target="_blank">
-    <img src="https://img.shields.io/badge/Outlook-0078D4?style=for-the-badge&logo=microsoft&logoColor=white" alt="Outlook"/>
-  </a>
-</p>
 
 ---
 <div align="center">
