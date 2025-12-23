@@ -18,10 +18,20 @@
   <img src="https://skillicons.dev/icons?i=docker,c,html,css,js,discord,twitter,instagram,git,github,windows,vscode,notion,python,blender,mastodon,gmail,md,obsidian,cmake&perline=10&theme=dark" />
 </div>
 
-<h2 align="center"> GitHub Stats </h2>
+<!-- <h2 align="center"> GitHub Stats </h2>
 <div align="center">
   <img src="https://readme-flame.vercel.app/api?username=ChaseanChen&show_icons=true&theme=tokyonight&count_private=true" height="180" alt="stats" />
   <img src="https://readme-flame.vercel.app/api/top-langs/?username=ChaseanChen&theme=tokyonight" height="180" alt="langs" />
+</div> -->
+
+<h2 align="center"> GitHub Stats </h2>
+<div align="center">
+  <img 
+  style = "border: 2px solid white; border-radius: 10px; padding: 5px;"
+  src="https://readme-flame.vercel.app/api?username=ChaseanChen&show_icons=true&theme=tokyonight&count_private=true&hide_border=true" height="180" alt="stats" />
+  <img 
+  style = "border: 2px solid white; border-radius: 10px; padding: 5px;"
+  src="https://readme-flame.vercel.app/api/top-langs/?username=ChaseanChen&theme=tokyonight&hide_border=true" height="180" alt="langs" />
 </div>
 
 <br/>
@@ -31,6 +41,7 @@
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/github-contribution-grid-snake-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/github-contribution-grid-snake.svg">
     <img 
+    style = "border: 2px solid white; border-radius: 10px; padding: 5px;"
     alt="github contribution grid snake animation" 
     src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/github-contribution-grid-snake.svg">
   </picture>
@@ -38,6 +49,7 @@
 
 <div align="center">
   <img 
+  style = "border: 2px solid white; border-radius: 10px; padding: 5px;"
   src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-night-rainbow.svg?v=new" 
   width="100%" 
   alt="3d stats"/>

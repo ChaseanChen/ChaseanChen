@@ -40,7 +40,7 @@ jobs:
           DRACULA_BG="#282a36"
           DRACULA_FG="#f8f8f2"
 
-          sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" rx=\"100\" ry=\"100\"/" dist/profile-night-rainbow.svg
+          sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" rx=\"75\" ry=\"75\"/" dist/profile-night-rainbow.svg
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
 
       - name: Generate Random ASCII Art
