@@ -2,8 +2,8 @@ name: Generate Profile Assets
 
 on:
   schedule:
-    - cron: "0 */12 * * *"
-  workflow_dispatch:
+    - cron: "0 */12 * * *" # 每12小时运行一次
+  workflow_dispatch: # 允许手动触发
 
 jobs:
   build:
@@ -14,6 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 1. 生成贪吃蛇动画
+      # 注意：此步骤可能会以 root 权限创建 dist 目录
       - name: Generate Snake
         uses: Platane/snk@v3
         with:
@@ -23,27 +25,37 @@ jobs:
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
             dist/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
+      # 2. 生成 3D 贡献图
       - name: Generate 3D Profile
         uses: yoshi389111/github-profile-3d-contrib@0.7.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
             
+      # 3. 处理 3D 图文件并应用 Dracula 主题颜色
+      # 修复：恢复了 sudo，用于解决 dist 目录的权限问题
       - name: Move 3D files to dist and Apply Theme
         run: |
-          mkdir -p dist
+          # 确保 dist 目录存在，并强制将所有权更改为当前用户
+          # 这是为了解决上一步 Snake Action 可能造成的 root 权限锁定问题
+          sudo mkdir -p dist
+          sudo chown -R $USER:$USER dist
           
+          # 复制生成的 3D 图到 dist 目录
           cp profile-3d-contrib/profile-night-rainbow.svg dist/
           
+          # 定义 Dracula 主题颜色
           DRACULA_BG="#282a36"
           DRACULA_FG="#f8f8f2"
           BORDER_COLOR="#f8f8f2"
           BORDER_WIDTH="5" 
 
+          # 使用 sed 修改 SVG 属性
           sed -i 's/stroke="none"//g' dist/profile-night-rainbow.svg
           sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$BORDER_COLOR\" stroke-width=\"$BORDER_WIDTH\" rx=\"50\" ry=\"50\"/" dist/profile-night-rainbow.svg
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
 
+      # 4. 生成随机 ASCII 艺术图 (带容错处理)
       - name: Generate Random ASCII Art
         shell: python
         run: |
@@ -51,13 +63,16 @@ jobs:
           import os
           import html
 
+          # 配置部分
           art_dir = "ascii_arts"
           output_dir = "dist"
-          fallback_art = "Hello\nWorld"
+          fallback_art = "Hello\nWorld" 
 
+          # 确保输出目录存在
           if not os.path.exists(output_dir):
               os.makedirs(output_dir)
 
+          # 读取 ASCII 文件逻辑
           selected_art = fallback_art
           if not os.path.exists(art_dir):
               print(f"Warning: Directory '{art_dir}' not found. Using fallback text.")
@@ -74,9 +89,11 @@ jobs:
                   except Exception as e:
                       print(f"Error reading file: {e}. Using fallback.")
 
+          # 处理文本内容
           selected_art = selected_art.strip("\n")
           lines = selected_art.split("\n")
           
+          # 计算 SVG 尺寸
           line_height_px = 18 
           padding_y = 60 
           content_height = len(lines) * line_height_px
@@ -94,11 +111,13 @@ jobs:
           start_x = (svg_width - art_width_px) / 2
           if start_x < 20: start_x = 20
 
+          # 生成 tspan
           tspans = ""
           for line in lines:
               safe_line = html.escape(line)
               tspans += f'<tspan x="{start_x}" dy="1.2em">{safe_line}</tspan>'
 
+          # 生成最终 SVG
           svg_content = f"""<svg fill="none" viewBox="0 0 600 {final_height}" width="100%" height="{final_height}" xmlns="http://www.w3.org/2000/svg">
             <rect width="100%" height="100%" fill="#282a36" rx="10" />
             <text x="{start_x}" y="30" 
@@ -109,10 +128,12 @@ jobs:
                   xml:space="preserve">{tspans}</text>
           </svg>"""
 
+          # 写入文件
           with open(f"{output_dir}/ascii_art.svg", "w", encoding="utf-8") as f:
               f.write(svg_content)
           print("ASCII Art SVG generated successfully.")
 
+      # 5. 推送所有资源到 output 分支
       - name: Push all assets to output branch
         uses: crazy-max/ghaction-github-pages@v4
         with:
