@@ -42,9 +42,9 @@
 
 <h2 align="center"> connect with me </h2>
 
-<p align="center">
+<!-- <p align="center">
   <img src="https://media.giphy.com/media/xuXzcHMkuwvf2/giphy.gif" width="200" />
-</p>
+</p> -->
 
 <p align="center">
   <a href="https://github.com/ChaseanChen" target="_blank">
