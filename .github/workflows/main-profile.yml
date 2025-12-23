@@ -39,8 +39,11 @@ jobs:
           # Dracula Theme Colors
           DRACULA_BG="#282a36"
           DRACULA_FG="#f8f8f2"
+          BORDER_COLOR="#f8f8f2"
+          BORDER_WIDTH="5" 
 
-          sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" rx=\"75\" ry=\"75\"/" dist/profile-night-rainbow.svg
+          sed -i 's/stroke="none"//g' dist/profile-night-rainbow.svg
+          sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$BORDER_COLOR\" stroke-width=\"$BORDER_WIDTH\" rx=\"10\" ry=\"10\"/" dist/profile-night-rainbow.svg
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
 
       - name: Generate Random ASCII Art
