@@ -28,86 +28,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
-
-      - name: Process 3D Profile (Apply Theme)
+            
+      - name: Move 3D files to dist and Apply Theme
         run: |
+          # 权限修复 (必须保留，否则报错)
           sudo mkdir -p dist
           sudo chown -R $USER:$USER dist
+          
+          # 复制 3D 图到 dist
           cp profile-3d-contrib/profile-night-rainbow.svg dist/
           
-          DRACULA_BG="#282a36"    
-          DRACULA_FG="#f8f8f2"    
-          BORDER_WIDTH="5"        
-          CORNER_RADIUS="10"      
+          # 定义 Dracula 主题颜色
+          DRACULA_BG="#282a36"
+          DRACULA_FG="#f8f8f2"
+          BORDER_COLOR="#f8f8f2"
+          BORDER_WIDTH="5" 
 
           sed -i 's/stroke="none"//g' dist/profile-night-rainbow.svg
-          sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$DRACULA_FG\" stroke-width=\"$BORDER_WIDTH\" rx=\"$CORNER_RADIUS\" ry=\"$CORNER_RADIUS\"/" dist/profile-night-rainbow.svg
+          sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$BORDER_COLOR\" stroke-width=\"$BORDER_WIDTH\" rx=\"50\" ry=\"50\"/" dist/profile-night-rainbow.svg
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
-
-      - name: Fix Snake Border
-        shell: python
-        run: |
-          import xml.etree.ElementTree as ET
-          import re
-          import os
-
-          file_path = "dist/github-contribution-grid-snake-dark.svg"
-          border_color = "#f8f8f2"
-          border_width = 5
-          corner_radius = 10
-
-          print(f"Processing file: {file_path}")
-          
-          if not os.path.exists(file_path):
-              print(f"Error: File {file_path} does not exist.")
-              exit(1)
-
-          ET.register_namespace("", "http://www.w3.org/2000/svg")
-          
-          try:
-              tree = ET.parse(file_path)
-              root = tree.getroot()
-
-              viewbox_str = root.attrib.get('viewBox', '')
-              if not viewbox_str:
-                  print("Error: SVG has no viewBox attribute. Cannot calculate border.")
-                  exit(1)
-                  
-              vb_parts = viewbox_str.replace(',', ' ').split()
-              if len(vb_parts) != 4:
-                  print(f"Error: Invalid viewBox format: {viewbox_str}")
-                  exit(1)
-                  
-              vb_width = float(vb_parts[2])
-              vb_height = float(vb_parts[3])
-              
-              print(f"Detected ViewBox Size: {vb_width}x{vb_height}")
-
-              offset = border_width / 2.0
-              rect_width = vb_width - border_width
-              rect_height = vb_height - border_width
-              
-              print(f"Creating Rect: x={offset}, y={offset}, w={rect_width}, h={rect_height}")
-
-              rect = ET.Element("rect")
-              rect.attrib['x'] = str(offset)
-              rect.attrib['y'] = str(offset)
-              rect.attrib['width'] = str(rect_width)
-              rect.attrib['height'] = str(rect_height)
-              rect.attrib['rx'] = str(corner_radius)
-              rect.attrib['ry'] = str(corner_radius)
-              rect.attrib['fill'] = "none"
-              rect.attrib['stroke'] = border_color
-              rect.attrib['stroke-width'] = str(border_width)
-
-              root.append(rect)
-
-              tree.write(file_path, encoding='UTF-8', xml_declaration=True)
-              print("SUCCESS: Snake border added.")
-                  
-          except Exception as e:
-              print(f"FATAL ERROR: {e}")
-              exit(1)
 
       - name: Generate Random ASCII Art
         shell: python
