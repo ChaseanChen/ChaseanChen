@@ -99,9 +99,9 @@ jobs:
               safe_line = html.escape(line)
               tspans += f'<tspan x="{start_x}" dy="1.2em">{safe_line}</tspan>'
 
-          border_color = "#f8f8f2" # Dracula Foreground (White-ish)
-          border_width = 5
-          bg_color = "#282a36"     # Dracula Background
+          border_color = "#f8f8f2"
+          border_width = 2
+          bg_color = "#282a36"
           
           # Adjust rect size to ensure border is inside viewBox and not clipped
           # Offset needs to be half the border width
