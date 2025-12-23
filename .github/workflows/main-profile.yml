@@ -56,17 +56,16 @@ jobs:
           # 3. 修正文字颜色
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
 
-          # === 步骤 D: 给 Snake (Dark版) 添加白色边框 ===
-          # 目标文件
+          # === 步骤 D: 给 Snake (Dark版) 添加白色边框 (修复版) ===
           SNAKE_FILE="dist/github-contribution-grid-snake-dark.svg"
           
-          # 逻辑：在 <svg ...> 标签闭合后，立即插入一个透明填充、白色描边的矩形覆盖在最上层或作为背景容器
-          # 这里的 sed 命令会匹配 <svg ...> 标签，并在其后追加一个 <rect> 元素
-          # fill="none": 保持透明，不遮挡里面的贪吃蛇
-          # stroke="$DRACULA_FG": 使用定义的白色边框
-          # width/height="100%": 撑满整个图片
+          # 定义边框矩形代码 (fill="none" 确保透明，不会遮挡内容)
+          BORDER_RECT="<rect width=\"100%\" height=\"100%\" fill=\"none\" stroke=\"$DRACULA_FG\" stroke-width=\"$BORDER_WIDTH\" rx=\"$CORNER_RADIUS\" ry=\"$CORNER_RADIUS\" />"
           
-          sed -i "s/<svg[^>]*>/&<rect width=\"100%\" height=\"100%\" fill=\"none\" stroke=\"$DRACULA_FG\" stroke-width=\"$BORDER_WIDTH\" rx=\"$CORNER_RADIUS\" ry=\"$CORNER_RADIUS\" \/>/" $SNAKE_FILE
+          # 关键修正：
+          # 使用 sed 将边框矩形插入到文件的末尾（</svg> 标签之前）。
+          # 这样可以确保边框绘制在所有图层的最上方，防止被背景遮挡。
+          sed -i "s/<\/svg>/$BORDER_RECT<\/svg>/" $SNAKE_FILE
           
           echo "Themes and borders applied successfully."
 
