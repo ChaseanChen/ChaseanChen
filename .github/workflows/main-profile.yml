@@ -47,7 +47,7 @@ jobs:
           sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$DRACULA_FG\" stroke-width=\"$BORDER_WIDTH\" rx=\"$CORNER_RADIUS\" ry=\"$CORNER_RADIUS\"/" dist/profile-night-rainbow.svg
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
 
-      # 4. 【修复版】完美 Snake 边框 (依赖 viewBox 计算)
+      # 4. 完美 Snake 边框 (依赖 viewBox 计算)
       - name: Fix Snake Border
         shell: python
         run: |
@@ -55,12 +55,10 @@ jobs:
           import re
           import os
 
-          # === 配置 ===
           file_path = "dist/github-contribution-grid-snake-dark.svg"
           border_color = "#f8f8f2" # 白色
           border_width = 5
           corner_radius = 10
-          # ============
 
           print(f"Processing file: {file_path}")
           
@@ -68,7 +66,6 @@ jobs:
               print(f"Error: File {file_path} does not exist.")
               exit(1)
 
-          # 注册 SVG 命名空间，防止输出 ns0: 前缀
           ET.register_namespace("", "http://www.w3.org/2000/svg")
           
           try:
