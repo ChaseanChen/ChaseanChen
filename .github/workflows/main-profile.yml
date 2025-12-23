@@ -2,8 +2,8 @@ name: Generate Profile Assets
 
 on:
   schedule:
-    - cron: "0 */12 * * *" # 每12小时运行一次
-  workflow_dispatch: # 允许手动触发
+    - cron: "0 */12 * * *"
+  workflow_dispatch:
 
 jobs:
   build:
@@ -14,7 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. 生成贪吃蛇动画
       - name: Generate Snake
         uses: Platane/snk@v3
         with:
@@ -24,14 +23,12 @@ jobs:
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
             dist/github-contribution-grid-snake.gif?color_snake=orange&color_dots=#bfd6f6,#8dbdff,#64a1f4,#4b91f1,#3c7dd9
 
-      # 2. 生成 3D 贡献图
       - name: Generate 3D Profile
         uses: yoshi389111/github-profile-3d-contrib@0.7.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
-            
-      # 3. 处理 3D 图 (应用 Dracula 主题)
+
       - name: Process 3D Profile (Apply Theme)
         run: |
           sudo mkdir -p dist
@@ -47,7 +44,6 @@ jobs:
           sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$DRACULA_FG\" stroke-width=\"$BORDER_WIDTH\" rx=\"$CORNER_RADIUS\" ry=\"$CORNER_RADIUS\"/" dist/profile-night-rainbow.svg
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
 
-      # 4. 完美 Snake 边框 (依赖 viewBox 计算)
       - name: Fix Snake Border
         shell: python
         run: |
@@ -56,7 +52,7 @@ jobs:
           import os
 
           file_path = "dist/github-contribution-grid-snake-dark.svg"
-          border_color = "#f8f8f2" # 白色
+          border_color = "#f8f8f2"
           border_width = 5
           corner_radius = 10
 
@@ -71,9 +67,7 @@ jobs:
           try:
               tree = ET.parse(file_path)
               root = tree.getroot()
-              
-              # 1. 强制解析 viewBox (它是坐标系的绝对真理)
-              # viewBox 格式通常为 "min-x min-y width height"
+
               viewbox_str = root.attrib.get('viewBox', '')
               if not viewbox_str:
                   print("Error: SVG has no viewBox attribute. Cannot calculate border.")
@@ -84,23 +78,17 @@ jobs:
                   print(f"Error: Invalid viewBox format: {viewbox_str}")
                   exit(1)
                   
-              # 获取画布的真实宽高
               vb_width = float(vb_parts[2])
               vb_height = float(vb_parts[3])
               
               print(f"Detected ViewBox Size: {vb_width}x{vb_height}")
 
-              # 2. 计算内缩 (Inset)
-              # 为了让 5px 的边框完全显示在画布内，我们需要：
-              # x 偏移 = 边框一半 (2.5)
-              # 宽度 = 总宽 - 边框 (Total - 5)
               offset = border_width / 2.0
               rect_width = vb_width - border_width
               rect_height = vb_height - border_width
               
               print(f"Creating Rect: x={offset}, y={offset}, w={rect_width}, h={rect_height}")
 
-              # 3. 创建矩形
               rect = ET.Element("rect")
               rect.attrib['x'] = str(offset)
               rect.attrib['y'] = str(offset)
@@ -108,14 +96,12 @@ jobs:
               rect.attrib['height'] = str(rect_height)
               rect.attrib['rx'] = str(corner_radius)
               rect.attrib['ry'] = str(corner_radius)
-              rect.attrib['fill'] = "none" # 透明
+              rect.attrib['fill'] = "none"
               rect.attrib['stroke'] = border_color
               rect.attrib['stroke-width'] = str(border_width)
-              
-              # 4. 插入到最后 (确保在最顶层)
+
               root.append(rect)
-              
-              # 5. 保存
+
               tree.write(file_path, encoding='UTF-8', xml_declaration=True)
               print("SUCCESS: Snake border added.")
                   
@@ -123,7 +109,6 @@ jobs:
               print(f"FATAL ERROR: {e}")
               exit(1)
 
-      # 5. 生成随机 ASCII 艺术图
       - name: Generate Random ASCII Art
         shell: python
         run: |
@@ -191,7 +176,6 @@ jobs:
           with open(f"{output_dir}/ascii_art.svg", "w", encoding="utf-8") as f:
               f.write(svg_content)
 
-      # 6. 推送资源
       - name: Push all assets to output branch
         uses: crazy-max/ghaction-github-pages@v4
         with:
