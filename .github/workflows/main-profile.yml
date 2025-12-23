@@ -99,13 +99,24 @@ jobs:
               safe_line = html.escape(line)
               tspans += f'<tspan x="{start_x}" dy="1.2em">{safe_line}</tspan>'
 
-          svg_content = f"""<svg fill="none" viewBox="0 0 600 {final_height}" width="100%" height="{final_height}" xmlns="http://www.w3.org/2000/svg">
-            <rect width="100%" height="100%" fill="#282a36" rx="10" />
+          border_color = "#f8f8f2" # Dracula Foreground (White-ish)
+          border_width = 5
+          bg_color = "#282a36"     # Dracula Background
+          
+          # Adjust rect size to ensure border is inside viewBox and not clipped
+          # Offset needs to be half the border width
+          rect_x = border_width / 2
+          rect_y = border_width / 2
+          rect_w = svg_width - border_width
+          rect_h = final_height - border_width
+
+          svg_content = f"""<svg fill="none" viewBox="0 0 {svg_width} {final_height}" width="100%" height="{final_height}" xmlns="http://www.w3.org/2000/svg">
+            <rect x="{rect_x}" y="{rect_y}" width="{rect_w}" height="{rect_h}" fill="{bg_color}" rx="15" ry="15" stroke="{border_color}" stroke-width="{border_width}" />
             <text x="{start_x}" y="30" 
                   font-family="Courier New, Courier, monospace" 
                   font-weight="bold" 
                   font-size="15" 
-                  fill="#f8f8f2" 
+                  fill="{border_color}" 
                   xml:space="preserve">{tspans}</text>
           </svg>"""
 
