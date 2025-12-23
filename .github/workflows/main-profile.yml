@@ -34,95 +34,97 @@ jobs:
       # 3. 处理 3D 图 (应用 Dracula 主题)
       - name: Process 3D Profile (Apply Theme)
         run: |
-          # 权限修复
           sudo mkdir -p dist
           sudo chown -R $USER:$USER dist
-          
-          # 复制文件
           cp profile-3d-contrib/profile-night-rainbow.svg dist/
           
-          # 定义颜色
           DRACULA_BG="#282a36"    
           DRACULA_FG="#f8f8f2"    
           BORDER_WIDTH="5"        
           CORNER_RADIUS="10"      
 
-          # 修改 3D 图样式 (sed 在这里依然很好用)
           sed -i 's/stroke="none"//g' dist/profile-night-rainbow.svg
           sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$DRACULA_FG\" stroke-width=\"$BORDER_WIDTH\" rx=\"$CORNER_RADIUS\" ry=\"$CORNER_RADIUS\"/" dist/profile-night-rainbow.svg
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
 
-      # 4. 【新】完美修复 Snake 边框 (使用 Python 计算内缩)
+      # 4. 【修复版】完美 Snake 边框 (依赖 viewBox 计算)
       - name: Fix Snake Border
         shell: python
         run: |
           import xml.etree.ElementTree as ET
           import re
+          import os
 
-          # 配置
+          # === 配置 ===
           file_path = "dist/github-contribution-grid-snake-dark.svg"
           border_color = "#f8f8f2" # 白色
           border_width = 5
           corner_radius = 10
+          # ============
 
-          # 注册 SVG 命名空间，防止保存时标签带上 ns0: 前缀
+          print(f"Processing file: {file_path}")
+          
+          if not os.path.exists(file_path):
+              print(f"Error: File {file_path} does not exist.")
+              exit(1)
+
+          # 注册 SVG 命名空间，防止输出 ns0: 前缀
           ET.register_namespace("", "http://www.w3.org/2000/svg")
           
           try:
               tree = ET.parse(file_path)
               root = tree.getroot()
               
-              # 获取 SVG 的宽度和高度
-              # 优先从 width/height 属性获取，如果没有则解析 viewBox
-              width = None
-              height = None
-
-              if 'width' in root.attrib:
-                  width = float(re.sub(r'[^\d.]', '', root.attrib['width']))
-              if 'height' in root.attrib:
-                  height = float(re.sub(r'[^\d.]', '', root.attrib['height']))
+              # 1. 强制解析 viewBox (它是坐标系的绝对真理)
+              # viewBox 格式通常为 "min-x min-y width height"
+              viewbox_str = root.attrib.get('viewBox', '')
+              if not viewbox_str:
+                  print("Error: SVG has no viewBox attribute. Cannot calculate border.")
+                  exit(1)
+                  
+              vb_parts = viewbox_str.replace(',', ' ').split()
+              if len(vb_parts) != 4:
+                  print(f"Error: Invalid viewBox format: {viewbox_str}")
+                  exit(1)
+                  
+              # 获取画布的真实宽高
+              vb_width = float(vb_parts[2])
+              vb_height = float(vb_parts[3])
               
-              if width is None or height is None:
-                  viewbox = root.attrib.get('viewBox', '').split()
-                  if len(viewbox) == 4:
-                      width = float(viewbox[2])
-                      height = float(viewbox[3])
-              
-              if width and height:
-                  print(f"SVG Size: {width}x{height}")
-                  
-                  # === 关键算法 ===
-                  # 为了防止边框被切掉，我们需要将矩形向内偏移 (offset)
-                  # 偏移量 = 边框宽度 / 2
-                  offset = border_width / 2
-                  
-                  # 新矩形的宽/高 = 原宽/高 - 边框宽度
-                  new_width = width - border_width
-                  new_height = height - border_width
+              print(f"Detected ViewBox Size: {vb_width}x{vb_height}")
 
-                  # 创建边框矩形元素
-                  rect = ET.Element("rect")
-                  rect.attrib['x'] = str(offset)
-                  rect.attrib['y'] = str(offset)
-                  rect.attrib['width'] = str(new_width)
-                  rect.attrib['height'] = str(new_height)
-                  rect.attrib['rx'] = str(corner_radius)
-                  rect.attrib['ry'] = str(corner_radius)
-                  rect.attrib['fill'] = "none" # 透明填充
-                  rect.attrib['stroke'] = border_color
-                  rect.attrib['stroke-width'] = str(border_width)
-                  
-                  # 将矩形添加到 SVG 的最后面（图层最顶端）
-                  root.append(rect)
-                  
-                  # 保存文件
-                  tree.write(file_path)
-                  print("Snake border applied perfectly.")
-              else:
-                  print("Error: Could not determine SVG dimensions.")
+              # 2. 计算内缩 (Inset)
+              # 为了让 5px 的边框完全显示在画布内，我们需要：
+              # x 偏移 = 边框一半 (2.5)
+              # 宽度 = 总宽 - 边框 (Total - 5)
+              offset = border_width / 2.0
+              rect_width = vb_width - border_width
+              rect_height = vb_height - border_width
+              
+              print(f"Creating Rect: x={offset}, y={offset}, w={rect_width}, h={rect_height}")
+
+              # 3. 创建矩形
+              rect = ET.Element("rect")
+              rect.attrib['x'] = str(offset)
+              rect.attrib['y'] = str(offset)
+              rect.attrib['width'] = str(rect_width)
+              rect.attrib['height'] = str(rect_height)
+              rect.attrib['rx'] = str(corner_radius)
+              rect.attrib['ry'] = str(corner_radius)
+              rect.attrib['fill'] = "none" # 透明
+              rect.attrib['stroke'] = border_color
+              rect.attrib['stroke-width'] = str(border_width)
+              
+              # 4. 插入到最后 (确保在最顶层)
+              root.append(rect)
+              
+              # 5. 保存
+              tree.write(file_path, encoding='UTF-8', xml_declaration=True)
+              print("SUCCESS: Snake border added.")
                   
           except Exception as e:
-              print(f"Error processing snake SVG: {e}")
+              print(f"FATAL ERROR: {e}")
+              exit(1)
 
       # 5. 生成随机 ASCII 艺术图
       - name: Generate Random ASCII Art
