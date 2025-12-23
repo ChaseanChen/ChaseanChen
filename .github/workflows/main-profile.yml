@@ -31,14 +31,11 @@ jobs:
             
       - name: Move 3D files to dist and Apply Theme
         run: |
-          # 权限修复 (必须保留，否则报错)
           sudo mkdir -p dist
           sudo chown -R $USER:$USER dist
-          
-          # 复制 3D 图到 dist
+
           cp profile-3d-contrib/profile-night-rainbow.svg dist/
-          
-          # 定义 Dracula 主题颜色
+
           DRACULA_BG="#282a36"
           DRACULA_FG="#f8f8f2"
           BORDER_COLOR="#f8f8f2"
