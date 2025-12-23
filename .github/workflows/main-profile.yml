@@ -31,45 +31,100 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: ${{ github.repository_owner }}
             
-      # 3. 处理文件：移动 3D 图、修复权限、统一添加边框主题
-      - name: Move 3D files to dist and Apply Theme
+      # 3. 处理 3D 图 (应用 Dracula 主题)
+      - name: Process 3D Profile (Apply Theme)
         run: |
-          # === 步骤 A: 权限修复 & 目录准备 ===
-          # 强制接管 dist 目录权限（修复之前 Generate Snake 可能导致的 root 权限问题）
+          # 权限修复
           sudo mkdir -p dist
           sudo chown -R $USER:$USER dist
           
-          # 复制 3D 图到 dist
+          # 复制文件
           cp profile-3d-contrib/profile-night-rainbow.svg dist/
           
-          # === 步骤 B: 定义 Dracula 主题变量 ===
-          DRACULA_BG="#282a36"    # 背景色 (深色)
-          DRACULA_FG="#f8f8f2"    # 前景色/边框色 (白色)
-          BORDER_WIDTH="5"        # 边框粗细
-          CORNER_RADIUS="10"      # 圆角大小
+          # 定义颜色
+          DRACULA_BG="#282a36"    
+          DRACULA_FG="#f8f8f2"    
+          BORDER_WIDTH="5"        
+          CORNER_RADIUS="10"      
 
-          # === 步骤 C: 给 3D Profile 图添加主题和边框 ===
-          # 1. 移除可能存在的无边框属性
+          # 修改 3D 图样式 (sed 在这里依然很好用)
           sed -i 's/stroke="none"//g' dist/profile-night-rainbow.svg
-          # 2. 修改背景矩形，添加边框颜色和圆角
           sed -i "0,/fill=[\"'][^\"']*[\"']/s//fill=\"$DRACULA_BG\" stroke=\"$DRACULA_FG\" stroke-width=\"$BORDER_WIDTH\" rx=\"$CORNER_RADIUS\" ry=\"$CORNER_RADIUS\"/" dist/profile-night-rainbow.svg
-          # 3. 修正文字颜色
           sed -i "s/fill=[\"']#e4e2e2[\"']/fill=\"$DRACULA_FG\"/g" dist/profile-night-rainbow.svg
 
-          # === 步骤 D: 给 Snake (Dark版) 添加白色边框 (修复版) ===
-          SNAKE_FILE="dist/github-contribution-grid-snake-dark.svg"
-          
-          # 定义边框矩形代码 (fill="none" 确保透明，不会遮挡内容)
-          BORDER_RECT="<rect width=\"100%\" height=\"100%\" fill=\"none\" stroke=\"$DRACULA_FG\" stroke-width=\"$BORDER_WIDTH\" rx=\"$CORNER_RADIUS\" ry=\"$CORNER_RADIUS\" />"
-          
-          # 关键修正：
-          # 使用 sed 将边框矩形插入到文件的末尾（</svg> 标签之前）。
-          # 这样可以确保边框绘制在所有图层的最上方，防止被背景遮挡。
-          sed -i "s/<\/svg>/$BORDER_RECT<\/svg>/" $SNAKE_FILE
-          
-          echo "Themes and borders applied successfully."
+      # 4. 【新】完美修复 Snake 边框 (使用 Python 计算内缩)
+      - name: Fix Snake Border
+        shell: python
+        run: |
+          import xml.etree.ElementTree as ET
+          import re
 
-      # 4. 生成随机 ASCII 艺术图
+          # 配置
+          file_path = "dist/github-contribution-grid-snake-dark.svg"
+          border_color = "#f8f8f2" # 白色
+          border_width = 5
+          corner_radius = 10
+
+          # 注册 SVG 命名空间，防止保存时标签带上 ns0: 前缀
+          ET.register_namespace("", "http://www.w3.org/2000/svg")
+          
+          try:
+              tree = ET.parse(file_path)
+              root = tree.getroot()
+              
+              # 获取 SVG 的宽度和高度
+              # 优先从 width/height 属性获取，如果没有则解析 viewBox
+              width = None
+              height = None
+
+              if 'width' in root.attrib:
+                  width = float(re.sub(r'[^\d.]', '', root.attrib['width']))
+              if 'height' in root.attrib:
+                  height = float(re.sub(r'[^\d.]', '', root.attrib['height']))
+              
+              if width is None or height is None:
+                  viewbox = root.attrib.get('viewBox', '').split()
+                  if len(viewbox) == 4:
+                      width = float(viewbox[2])
+                      height = float(viewbox[3])
+              
+              if width and height:
+                  print(f"SVG Size: {width}x{height}")
+                  
+                  # === 关键算法 ===
+                  # 为了防止边框被切掉，我们需要将矩形向内偏移 (offset)
+                  # 偏移量 = 边框宽度 / 2
+                  offset = border_width / 2
+                  
+                  # 新矩形的宽/高 = 原宽/高 - 边框宽度
+                  new_width = width - border_width
+                  new_height = height - border_width
+
+                  # 创建边框矩形元素
+                  rect = ET.Element("rect")
+                  rect.attrib['x'] = str(offset)
+                  rect.attrib['y'] = str(offset)
+                  rect.attrib['width'] = str(new_width)
+                  rect.attrib['height'] = str(new_height)
+                  rect.attrib['rx'] = str(corner_radius)
+                  rect.attrib['ry'] = str(corner_radius)
+                  rect.attrib['fill'] = "none" # 透明填充
+                  rect.attrib['stroke'] = border_color
+                  rect.attrib['stroke-width'] = str(border_width)
+                  
+                  # 将矩形添加到 SVG 的最后面（图层最顶端）
+                  root.append(rect)
+                  
+                  # 保存文件
+                  tree.write(file_path)
+                  print("Snake border applied perfectly.")
+              else:
+                  print("Error: Could not determine SVG dimensions.")
+                  
+          except Exception as e:
+              print(f"Error processing snake SVG: {e}")
+
+      # 5. 生成随机 ASCII 艺术图
       - name: Generate Random ASCII Art
         shell: python
         run: |
@@ -137,7 +192,7 @@ jobs:
           with open(f"{output_dir}/ascii_art.svg", "w", encoding="utf-8") as f:
               f.write(svg_content)
 
-      # 5. 推送资源
+      # 6. 推送资源
       - name: Push all assets to output branch
         uses: crazy-max/ghaction-github-pages@v4
         with:
