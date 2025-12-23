@@ -30,12 +30,15 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/github-contribution-grid-snake-dark.svg">
     <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/github-contribution-grid-snake.svg">
-    <img alt="github contribution grid snake animation" src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/github-contribution-grid-snake.svg">
+    <img 
+    alt="github contribution grid snake animation" 
+    src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/github-contribution-grid-snake.svg">
   </picture>
 </div>
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-night-rainbow.svg?v=new" 
+  <img 
+  src="https://raw.githubusercontent.com/ChaseanChen/ChaseanChen/output/profile-night-rainbow.svg?v=new" 
   width="100%" 
   alt="3d stats"/>
 </div>
