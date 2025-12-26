@@ -51,11 +51,7 @@
 </p>
 
 <hr/>
-
-<div align="center">
   
 > *"All great deeds and all great thoughts have a ridiculous beginning."*
 >
 > — **Albert Camus**, *The Myth of Sisyphus*
-
-</div>
