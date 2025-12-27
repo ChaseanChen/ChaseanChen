@@ -53,5 +53,4 @@
 <hr/>
   
 > *"All great deeds and all great thoughts have a ridiculous beginning."*
->
 > — **Albert Camus**, *The Myth of Sisyphus*
